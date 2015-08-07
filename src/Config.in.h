@@ -1,24 +1,24 @@
 /*
  Copyright (C) 2015 BrewTroller
- 
+
  This file is part of BrewTroller.
- 
+
  BrewTroller is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  BrewTroller is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with BrewTroller.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
+
  BrewTroller - Open Source Brewing Computer
- 
+
  Documentation, Forums and more information available at http://brewtroller.com
  */
 #ifndef BrewTroller_Config_h
@@ -76,13 +76,13 @@
 
 // HLT_AS_KETTLE: This option remaps the Kettle temp sensor, volume sensor and heat
 // output to the HLT's devices to  allow the HLT to be reused as a kettle.
-#cmakedefine HLT_AS_KETTLE
+//#cmakedefine HLT_AS_KETTLE
 
 // KETTLE_AS_MASH: This option remaps the Mash temp sensor, volume sensor and heat
 // output to the Kettle's devices to allow the Kettle to also serve as Mash Tun.
 // Use with HERMS HWProfile for BX1/DX1/EX1 which defines only HLT and Kettle Heat
 // Outputs leaving an additional output to use for pumps/valves.
-#cmakedefine KETTLE_AS_MASH
+//#cmakedefine KETTLE_AS_MASH
 
 // MASH_PREHEAT_SENSOR: This option allows for an alternate temperature sensor to
 // control the mash heat output during the Preheat step. This is used to control the
@@ -233,10 +233,10 @@ static const uint8_t TS = 1;
 // logic to be enabled during preheat. By default, a recipe's HLT Temp setting is used
 // during preheat.
 
-//#define SMART_HERMS_HLT
-#define MASH_HEAT_LOSS 0
-#define HLT_MAX_TEMP 180
-//#define SMART_HERMS_PREHEAT
+#define SMART_HERMS_HLT
+#define MASH_HEAT_LOSS 2
+#define HLT_MAX_TEMP 90
+#define SMART_HERMS_PREHEAT
 //**********************************************************************************
 
 //**********************************************************************************
@@ -651,7 +651,7 @@ static const uint8_t TS = 1;
 //
 // Enables the RGBIO8 system.
 //
-//#define RGBIO8_ENABLE
+#define RGBIO8_ENABLE
 //
 // Enables the setup UI for the RGBIO8 board. This takes up quite a bit of code
 // space so it can be disabled once you have set up all of your boards. It is
@@ -667,7 +667,7 @@ static const uint8_t TS = 1;
 //
 // The number of RGB boards you have connnected.
 //
-#define RGBIO8_NUM_BOARDS 1
+#define RGBIO8_NUM_BOARDS 2
 //
 //**********************************************************************************
 
