@@ -3,13 +3,6 @@
 #include "Config.h"
 #include "Com_RGBIO8.h"
 
-#define SOFTSWITCH_OFF 0
-#define SOFTSWITCH_ON 1
-#define SOFTSWITCH_AUTO 2
-
-byte softSwitchPv[PVOUT_COUNT];
-byte softSwitchHeat[HEAT_OUTPUTS_COUNT];
-
 RGBIO8 rgbio8s[RGBIO8_NUM_BOARDS];
 unsigned long lastRGBIO8 = 0;
 
@@ -21,7 +14,7 @@ void RGBIO8_Init() {
   for (int i = 0; i < RGBIO8_NUM_BOARDS; i++) {
     rgbio8s[i].begin(0, RGBIO8_START_ADDR + i);
   }
-  
+
   // Set the default coniguration. The user can override this with the
   // custom configuration information below.
   int ioIndex = 0;
@@ -29,12 +22,12 @@ void RGBIO8_Init() {
     rgbio8s[ioIndex / 8].assignHeatInput(i, ioIndex % 8);
     rgbio8s[ioIndex / 8].assignHeatOutputRecipe(i, ioIndex % 8, 0);
   }
-  
+
   for (int i = 0; i < PVOUT_COUNT && (ioIndex / 8) < RGBIO8_NUM_BOARDS; i++, ioIndex++) {
     rgbio8s[ioIndex / 8].assignPvInput(i, ioIndex % 8);
     rgbio8s[ioIndex / 8].assignPvOutputRecipe(i, ioIndex % 8, 1);
   }
-  
+
   // Set the default values of Softswitches to AUTO so that outputs that are not assigned to softswitches are unaffected by this logic
   for (byte i = 0; i < PVOUT_COUNT; i++)
     softSwitchPv[i] = SOFTSWITCH_AUTO;
@@ -42,7 +35,7 @@ void RGBIO8_Init() {
   for (byte i = 0; i < HEAT_OUTPUTS_COUNT; i++)
     softSwitchHeat[i] = SOFTSWITCH_AUTO;
 
-  
+
   ////////////////////////////////////////////////////////////////////////
   // CUSTOM CONFIGURATION
   ////////////////////////////////////////////////////////////////////////
@@ -58,12 +51,12 @@ void RGBIO8_Init() {
   //            currently set to off. It may turn on at any time.
   // Auto On:   The output is under auto control of BrewTroller, and is
   //            currently set to on. It may turn off at any time.
-  // On:        The output is forced on and is not under control of 
+  // On:        The output is forced on and is not under control of
   //            BrewTroller.
-  // 
+  //
   // The first thing that is configured are output "recipes". These recipes
   // define the color that will be shown for each of the states above.
-  // 
+  //
   // Often times you will see colors on a web page expressed in RGB
   // hexidecimal, such as #FF0000 meaning bright red or #FFFF00 meaning
   // bright yellow. The RGBIO8 board uses a similar system for color,
@@ -71,21 +64,21 @@ void RGBIO8_Init() {
   // a color you like that is in the #ABCDEF format, you can convert it
   // to the right code for RGBIO8 by removing the second, fourth and
   // last digit. So, for instance, #ABCDEF would become #ACE.
-  // 
+  //
   // The system has room for four recipes, so you can create 4 different
   // color schemes that map to your outputs.
-  // 
+  //
   // By default we use two recipes. One for heat outputs and another for
   // pump/valve outputs. They are listed below. If you like, you can just
   // change the colors in a recipe, or you can create entirely new recipes.
-  
+
   // Recipe 0, used for Heat Outputs
   // Off:       0xF00 (Red)
   // Auto Off:  0xFFF (White)
   // Auto On:   0xF40 (Orange)
   // On:        0x0F0 (Green)
   RGBIO8::setOutputRecipe(0, 0xF00, 0xFFF, 0xF40, 0x0F0);
-  
+
   // Recipe 1, used for Pump/Valve Outputs
   // Off:       0xF00 (Red)
   // Auto Off:  0xFFF (White)
@@ -95,8 +88,8 @@ void RGBIO8_Init() {
 
   //
   // Now we move on to mappings. A mapping ties a given input or output to
-  // either a heat output or a pump/valve output. 
-  // 
+  // either a heat output or a pump/valve output.
+  //
   // To create a mapping between a heat output you use one of the following
   // two functions:
   // assignHeatInput(vesselNumber, inputNumber);
@@ -110,12 +103,12 @@ void RGBIO8_Init() {
   // When creating a mapping, you have to specify which RGB board the mapping
   // belongs to. That is done by using rgbio8s[boardNumber]. before the
   // function calls above. Some example mappings are shown below:
-  // 
+  //
   // Map board 0, heat output 0 (HLT) to input/output 0 using recipe 0.
   // rgbio8s[0].assignHeatInput(0, 0);
   // rgbio8s[0].assignHeatOutputRecipe(0, 0, 0);
   //
-  // 
+  //
   // Map board 1, pump/valve output 2 to input/output 3 using recipe 1.
   // rgbio8s[1].assignPvInput(2, 3);
   // rgbio8s[1].assignPvOutputRecipe(2, 3, 1);
@@ -149,7 +142,7 @@ void RGBIO8::begin(int rs485_address, int i2c_address) {
 }
 
 void RGBIO8::setOutputRecipe(
-  byte recipe_id, 
+  byte recipe_id,
   uint16_t off_rgb,
   uint16_t auto_off_rgb,
   uint16_t auto_on_rgb,
@@ -159,33 +152,33 @@ void RGBIO8::setOutputRecipe(
     output_recipes[recipe_id][2] = auto_on_rgb;
     output_recipes[recipe_id][3] = on_rgb;
 }
-    
+
 void RGBIO8::assignHeatOutputRecipe(byte vessel, byte output, byte recipe_id) {
   output_assignments[output].type = 1;
   output_assignments[output].index = vessel;
   output_assignments[output].recipe_id = recipe_id;
 }
-    
+
 void RGBIO8::assignPvOutputRecipe(byte pv, byte output, byte recipe_id) {
   output_assignments[output].type = 2;
   output_assignments[output].index = pv;
   output_assignments[output].recipe_id = recipe_id;
 }
-    
+
 void RGBIO8::assignHeatInput(byte vessel, byte input) {
   input_assignments[input].type = 1;
   input_assignments[input].index = vessel;
 }
-    
+
 void RGBIO8::assignPvInput(byte pv, byte input) {
   input_assignments[input].type = 2;
   input_assignments[input].index = pv;
 }
-    
+
 void RGBIO8::update(void) {
   // Get the state of the 8 inputs first
   getInputs(&inputs_manual, &inputs_auto);
-  
+
   // Update any assigned inputs
   for (int i = 0; i < 8; i++) {
     RGBIO8_input_assignment *a = &input_assignments[i];
@@ -216,7 +209,7 @@ void RGBIO8::update(void) {
       }
     }
   }
-  
+
   // Update any assigned outputs
   #ifdef PVOUT
   unsigned long vlvBits = Valves.get();
@@ -297,11 +290,11 @@ int RGBIO8::getInputs(uint8_t *m, uint8_t *a) {
   uint8_t inputs_m = Wire.read();
   uint8_t inputs_a = Wire.read();
   uint8_t crc = Wire.read();
-  
+
   uint8_t crc_comp = '*';
   crc_comp = crc8(crc_comp, inputs_m);
   crc_comp = crc8(crc_comp, inputs_a);
-  
+
   if (crc == crc_comp) {
     *m = inputs_m;
     *a = inputs_a;
@@ -325,7 +318,7 @@ uint8_t RGBIO8::crc8(uint8_t inCrc, uint8_t inData ) {
   uint8_t data;
 
   data = inCrc ^ inData;
-  
+
   for (i = 0; i < 8; i++) {
     if ((data & 0x80) != 0) {
       data <<= 1;
@@ -341,4 +334,3 @@ uint8_t RGBIO8::crc8(uint8_t inCrc, uint8_t inData ) {
 
 
 #endif
-

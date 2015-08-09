@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 #include <pin.h>
-
+#include "Com_RGBIO8.h"
 
 #ifdef PWM_BY_TIMER
 void pwmInit( void );

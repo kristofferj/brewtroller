@@ -1,26 +1,26 @@
 /*
  Copyright (C) 2009, 2010 Matt Reba, Jeremiah Dillingham
- 
+
  This file is part of BrewTroller.
- 
+
  BrewTroller is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  BrewTroller is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with BrewTroller.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
+
  BrewTroller - Open Source Brewing Computer
  Software Lead: Matt Reba (matt_AT_brewtroller_DOT_com)
  Hardware Lead: Jeremiah Dillingham (jeremiah_AT_brewtroller_DOT_com)
- 
+
  Documentation, Forums and more information available at http://www.brewtroller.com
  */
 
@@ -134,7 +134,7 @@ boolean doInit = 1;
 //**********************************************************************************
 void uiInit() {
     LCD.init();
-    
+
 #ifndef ENCODER_I2C
 #ifndef ENCODER_OLD_CONSTRUCTOR
     Encoder.begin(ENCODER_TYPE, ENTER_PIN, ENCA_PIN, ENCB_PIN);
@@ -147,9 +147,9 @@ void uiInit() {
 #else
     Encoder.begin(ENCODER_I2CADDR);
 #endif
-    
-    
-    
+
+
+
     //Check to see if EEPROM Initialization is needed
     if (checkConfig()) {
         LCD.clear();
@@ -157,7 +157,7 @@ void uiInit() {
         if (confirmChoice(UIStrings::EEPROMInit::INIT_EEPROM, 3)) UIinitEEPROM();
         LCD.clear();
     }
-    
+
     setActive(SCREEN_HOME);
     //ensure we aren't locked to the current screen
     unlockUI();
@@ -245,14 +245,14 @@ void setActive(byte screen) {
 void screenInit() {
     LCD.clear();
     LCD.setCustChar_P(7, UNLOCK_ICON);
-    
+
     //Print Program Active Char (Overwritten if no program active)
     if (activeScreen != SCREEN_HOME) {
         LCD.setCustChar_P(6, PROG_ICON);
         LCD.writeCustChar(0, 0, 6);
         LCD.setCustChar_P(5, BELL);
     }
-    
+
     if (activeScreen == SCREEN_HOME) {
         //Screen Init: Home
 #ifdef LOGO_TROLL
@@ -292,7 +292,7 @@ void screenInit() {
         LCD.lPad(2, 10, itoa(BUILDNUM, buf, 10), 4, '0');
         LCD.print_P(3, 0, UIStrings::HomeScreen::BT_URL);
 #endif
-        
+
     }
     else if (activeScreen == SCREEN_FILL) {
         //Screen Init: Fill/Refill
@@ -309,7 +309,7 @@ void screenInit() {
         vftoa(tgtVol[VS_MASH], buf, 1000, 1);
         truncFloat(buf, 5);
         LCD.lPad(1, 15, buf, 5, ' ');
-        
+
         if (screenLock) {
             LCD.print_P(3, 0, UIStrings::Generic::GREATER_SYM);
             LCD.print_P(3, 10, UIStrings::Generic::LESS_SYM);
@@ -318,13 +318,13 @@ void screenInit() {
             Encoder.setMax(5);
             Encoder.setCount(0);
         }
-        
+
     }
     else if (activeScreen == SCREEN_MASH) {
         //Screen Init: Preheat/Mash
         //Delay Start Indication
         timerLastPrint = 0;
-        
+
         if (brewStepIsActive(BREWSTEP_DELAY)) LCD.print_P(0, 1, UIStrings::MashStep::DELAY);
         else if (brewStepIsActive(BREWSTEP_PREHEAT)) LCD.print_P(0, 1, UIStrings::MashStep::PREHEAT);
         else if (brewStepIsActive(BREWSTEP_DOUGHIN)) LCD.print_P(0, 1, UIStrings::MashStep::DOUGHIN);
@@ -343,27 +343,27 @@ void screenInit() {
         LCD.print_P(1, 1, UIStrings::Vessel::TITLE_VS_HLT);
         LCD.print_P(2, 1, UIStrings::Vessel::TITLE_VS_MASH);
         LCD.print_P(3, 1, UIStrings::DFRims::RIMS);
-        
+
         LCD.print_P(1, 13, UIStrings::Units::TUNIT);
         LCD.print_P(1, 19, UIStrings::Units::TUNIT);
         LCD.print_P(2, 13, UIStrings::Units::TUNIT);
         LCD.print_P(2, 19, UIStrings::Units::TUNIT);
         LCD.print_P(3, 13, UIStrings::Units::TUNIT);
         LCD.print_P(3, 19, UIStrings::Units::TUNIT);
-        
+
 #else
         // This is the standard screen
         LCD.print_P(0, 11, UIStrings::Vessel::TITLE_VS_HLT);
         LCD.print_P(0, 16, UIStrings::Vessel::TITLE_VS_HLT);
         LCD.print_P(1, 1, UIStrings::Generic::TARGET);
         LCD.print_P(2, 1, UIStrings::Generic::ACTUAL);
-        
+
         LCD.print_P(1, 13, UIStrings::Units::TUNIT);
         LCD.print_P(1, 19, UIStrings::Units::TUNIT);
         LCD.print_P(2, 13, UIStrings::Units::TUNIT);
         LCD.print_P(2, 19, UIStrings::Units::TUNIT);
 #endif
-        
+
     }
     else if (activeScreen == SCREEN_SPARGE) {
         //Screen Init: Sparge
@@ -383,7 +383,7 @@ void screenInit() {
         LCD.print_P(1, 12, UIStrings::Units::TUNIT);
         LCD.print_P(2, 12, UIStrings::Units::TUNIT);
         LCD.print_P(3, 12, UIStrings::Units::TUNIT);
-        
+
         if (screenLock) {
             LCD.print_P(0, 8, UIStrings::Generic::GREATER_SYM);
             LCD.print_P(0, 19, UIStrings::Generic::LESS_SYM);
@@ -392,7 +392,7 @@ void screenInit() {
             Encoder.setMax(7);
             Encoder.setCount(0);
         }
-        
+
     }
     else if (activeScreen == SCREEN_BOIL) {
         //Screen Init: Boil
@@ -400,7 +400,7 @@ void screenInit() {
         if (brewStepIsActive(BREWSTEP_BOIL)) LCD.print_P(0, 1, UIStrings::BoilScreen::BOIL);
         else LCD.print_P(0,0, UIStrings::BoilScreen::BOIL);
         LCD.print_P(1, 19, UIStrings::Units::TUNIT);
-        
+
         if (screenLock) {
             Encoder.setMin(0);
             Encoder.setMax(PIDLIMIT_KETTLE);
@@ -408,7 +408,7 @@ void screenInit() {
             //If Kettle is off keep it off until unlocked
             if (!setpoint[VS_KETTLE]) boilControlState = CONTROLSTATE_OFF;
         }
-        
+
     }
     else if (activeScreen == SCREEN_CHILL) {
         //Screen Init: Chill
@@ -418,12 +418,12 @@ void screenInit() {
         LCD.print_P(0, 17, UIStrings::ChillScreen::H20);
         LCD.print_P(1, 6, UIStrings::ChillScreen::IN);
         LCD.print_P(2, 5, UIStrings::ChillScreen::OUT);
-        
+
         LCD.print_P(1, 13, UIStrings::Units::TUNIT);
         LCD.print_P(1, 19, UIStrings::Units::TUNIT);
         LCD.print_P(2, 13, UIStrings::Units::TUNIT);
         LCD.print_P(2, 19, UIStrings::Units::TUNIT);
-        
+
         if (screenLock) {
             LCD.print_P(3, 0, UIStrings::Generic::GREATER_SYM);
             LCD.print_P(3, 11, UIStrings::Generic::LESS_SYM);
@@ -432,7 +432,7 @@ void screenInit() {
             Encoder.setMax(6);
             Encoder.setCount(0);
         }
-        
+
     }
     else if (activeScreen == SCREEN_AUX) {
         //Screen Init: AUX
@@ -445,9 +445,9 @@ void screenInit() {
         LCD.print_P(3, 1, UIStrings::AUXScreen::AUX_THREE);
         LCD.print_P(3, 11, UIStrings::Units::TUNIT);
 #endif
-        
+
     }
-    
+
     //Write Unlock symbol to upper right corner
     if (!screenLock) LCD.writeCustChar(0, 19, 7);
 }
@@ -458,24 +458,24 @@ void screenInit() {
 void screenRefresh() {
     if (activeScreen == SCREEN_HOME) {
         //Refresh Screen: Home
-        
+
     }
     else if (activeScreen == SCREEN_FILL) {
         char spacePad = ' ';
         vftoa(volAvg[VS_HLT], buf, 1000, 1);
         truncFloat(buf, 5);
         LCD.lPad(2, 9, buf, 5, spacePad);
-        
+
         vftoa(volAvg[VS_MASH], buf, 1000, 1);
         truncFloat(buf, 5);
         LCD.lPad(2, 15, buf, 5, spacePad);
-        
+
         if (vlvConfigIsActive(VLV_FILLHLT)) LCD.print_P(3, 11, UIStrings::Generic::ON);
         else LCD.print_P(3, 11, UIStrings::Generic::OFF);
-        
+
         if (vlvConfigIsActive(VLV_FILLMASH)) LCD.print_P(3, 18, UIStrings::Generic::ON);
         else LCD.print_P(3, 17, UIStrings::Generic::OFF);
-        
+
         if (screenLock) {
             int encValue = Encoder.change();
             if (encValue >= 0) {
@@ -488,11 +488,11 @@ void screenRefresh() {
                 else if (encValue == 5) LCD.print_P(3, 3, UIStrings::Generic::MENU);
             }
         }
-        
+
     }
     else if (activeScreen == SCREEN_MASH) {
         //Refresh Screen: Preheat/Mash
-        
+
         // The DIRECT_FIRED_RIMS option uses a different screen layout, so the logic just
         // does not work.  So two blocks are required.
 #ifdef DIRECT_FIRED_RIMS
@@ -560,11 +560,11 @@ void screenRefresh() {
         vftoa(tgtVol[VS_HLT], buf, 1000, 1);
         truncFloat(buf, 6);
         LCD.lPad(1, 14, buf, 6, ' ');
-        
+
         vftoa(tgtVol[VS_MASH], buf, 1000, 1);
         truncFloat(buf, 6);
         LCD.lPad(2, 14, buf, 6, ' ');
-        
+
         vftoa(tgtVol[VS_KETTLE], buf, 1000, 1);
         truncFloat(buf, 6);
         LCD.lPad(3, 14, buf, 6, ' ');
@@ -572,21 +572,21 @@ void screenRefresh() {
         vftoa(volAvg[VS_HLT], buf, 1000, 1);
         truncFloat(buf, 6);
         LCD.lPad(1, 14, buf, 6, ' ');
-        
+
         vftoa(volAvg[VS_MASH], buf, 1000, 1);
         truncFloat(buf, 6);
         LCD.lPad(2, 14, buf, 6, ' ');
-        
+
         vftoa(volAvg[VS_KETTLE], buf, 1000, 1);
         truncFloat(buf, 6);
         LCD.lPad(3, 14, buf, 6, ' ');
 #endif
-        
+
         if (screenLock) {
             int encValue = Encoder.change();
             if (encValue >= 0) {
                 LCD.rPad(0, 9, "", 10, ' ');
-                
+
                 if (encValue == 0) LCD.print_P(0, 10, UIStrings::Generic::CONTINUE);
                 else if (encValue == 1) LCD.print_P(0, 9, UIStrings::ValveProfile::SPARGEIN);
                 else if (encValue == 2) LCD.print_P(0, 9, UIStrings::ValveProfile::SPARGEOUT);
@@ -597,7 +597,7 @@ void screenRefresh() {
                 else if (encValue == 7) LCD.print_P(0, 12, UIStrings::Generic::MENU);
             }
         }
-        
+
         // Not sure what to do here, due to the very serious design
         // defect of using temperature sensors IDs as the index variable.
         for (byte i = TS_HLT; i <= TS_KETTLE; i++) {
@@ -621,13 +621,13 @@ void screenRefresh() {
                     break;
             }
         }
-        
+
         printTimer(TIMER_BOIL, 3, 0);
-        
+
         vftoa(volAvg[VS_KETTLE], buf, 1000, 1);
         truncFloat(buf, 5);
         LCD.lPad(2, 15, buf, 5, ' ');
-        
+
         if (PIDEnabled[TS_KETTLE]) {
             byte pct = PIDOutput[TS_KETTLE] / PIDCycle[TS_KETTLE];
             if (pct == 0) strcpy_P(buf, UIStrings::Generic::OFF);
@@ -653,7 +653,7 @@ void screenRefresh() {
             }
             if (boilControlState == CONTROLSTATE_AUTO) Encoder.setCount(PIDOutput[VS_KETTLE] / PIDCycle[VS_KETTLE]);
         }
-        
+
     }
     else if (activeScreen == SCREEN_CHILL) {
         //Refresh Screen: Chill
@@ -676,7 +676,7 @@ void screenRefresh() {
         if (temp[TS_H2OOUT] == BAD_TEMP) LCD.print_P(2, 15, UIStrings::Generic::TEMPBLANK); else LCD.lPad(2, 15, itoa(temp[TS_H2OOUT] / 100, buf, 10), 4, ' ');
         if (vlvConfigIsActive(VLV_CHILLBEER)) LCD.print_P(3, 12, UIStrings::Generic::ON); else LCD.print_P(3, 11, UIStrings::Generic::OFF);
         if (vlvConfigIsActive(VLV_CHILLH2O)) LCD.print_P(3, 18, UIStrings::Generic::ON); else LCD.print_P(3, 17, UIStrings::Generic::OFF);
-        
+
     }
     else if (activeScreen == SCREEN_AUX) {
         //Screen Refresh: AUX
@@ -712,36 +712,36 @@ void screenEnter() {
             if (activeScreen == SCREEN_HOME) {
                 //Screen Enter: Home
                 menu homeMenu(3, 9);
-                
+
                 while(1) {
                     //Item updated on each cycle
                     homeMenu.setItem_P(UIStrings::Generic::EXIT, 255);
                     homeMenu.setItem_P(UIStrings::MainMenu::EDIT_PROGRAM, 1);
                     homeMenu.setItem_P(UIStrings::MainMenu::START_PROGRAM, 2);
-                    
+
                     homeMenu.setItem_P(UIStrings::ValveProfile::DRAIN, 3);
                     if (vlvConfigIsActive(VLV_DRAIN)) homeMenu.appendItem_P(UIStrings::Shared::VALVE_ON, 3);
                     else homeMenu.appendItem_P(UIStrings::Shared::VALVE_OFF, 3);
-                    
+
                     homeMenu.setItem_P(UIStrings::ValveProfile::USER1, 4);
                     if (vlvConfigIsActive(VLV_USER1)) homeMenu.appendItem_P(UIStrings::Shared::VALVE_ON, 4);
                     else homeMenu.appendItem_P(UIStrings::Shared::VALVE_OFF, 4);
-                    
+
                     homeMenu.setItem_P(UIStrings::ValveProfile::USER2, 5);
                     if (vlvConfigIsActive(VLV_USER2)) homeMenu.appendItem_P(UIStrings::Shared::VALVE_ON, 5);
                     else homeMenu.appendItem_P(UIStrings::Shared::VALVE_OFF, 5);
-                    
+
                     homeMenu.setItem_P(UIStrings::ValveProfile::USER3, 6);
                     if (vlvConfigIsActive(VLV_USER3)) homeMenu.appendItem_P(UIStrings::Shared::VALVE_ON, 6);
                     else homeMenu.appendItem_P(UIStrings::Shared::VALVE_OFF, 6);
-                    
+
                     homeMenu.setItem_P(UIStrings::MainMenu::RESET_ALL, 7);
 #ifndef UI_NO_SETUP
                     homeMenu.setItem_P(UIStrings::MainMenu::SYSTEM_SETUP, 8);
 #endif
-                    
+
                     byte lastOption = scrollMenu("Main Menu", &homeMenu);
-                    
+
                     if (lastOption == 1) editProgramMenu();
                     else if (lastOption == 2) {
                         startProgramMenu();
@@ -780,7 +780,7 @@ void screenEnter() {
                             clearTimer(TIMER_BOIL);
                         }
                     }
-                    
+
 #ifndef UI_NO_SETUP
                     else if (lastOption == 8) menuSetup();
 #endif
@@ -792,7 +792,7 @@ void screenEnter() {
                     }
                 }
                 doInit = 1;
-                
+
             } else if (activeScreen == SCREEN_FILL) {
                 //Sceeen Enter: Fill/Refill
                 int encValue = Encoder.getCount();
@@ -809,7 +809,7 @@ void screenEnter() {
                     fillMenu.setItem_P(UIStrings::Generic::CONTINUE, 3);
                     fillMenu.setItem_P(UIStrings::Generic::ABORT, 4);
                     fillMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-                    
+
                     byte lastOption = scrollMenu("Fill Menu", &fillMenu);
                     if (lastOption == 0) { if(tgtVol[VS_HLT] || tgtVol[VS_MASH]) autoValve[AV_FILL] = 1; }
                     else if (lastOption == 1) tgtVol[VS_HLT] = getValue_P(UIStrings::Shared::HLT_TARGET_VOL, tgtVol[VS_HLT], 1000, 9999999, UIStrings::Units::VOLUNIT);
@@ -825,34 +825,34 @@ void screenEnter() {
                     }
                     doInit = 1;
                 }
-                
+
             } else if (activeScreen == SCREEN_MASH) {
                 //Screen Enter: Preheat/Mash
                 menu mashMenu(3, 7);
-                
+
                 mashMenu.setItem_P(UIStrings::Shared::HLT_SETPOINT, 0);
                 mashMenu.appendItem_P(UIStrings::Generic::COLON, 0);
                 vftoa(setpoint[VS_HLT], buf, 100, 1);
                 truncFloat(buf, 4);
                 mashMenu.appendItem(buf, 0);
                 mashMenu.appendItem_P(UIStrings::Units::TUNIT, 0);
-                
+
                 mashMenu.setItem_P(UIStrings::MashMenu::MASH_SETPOINT, 1);
                 mashMenu.appendItem_P(UIStrings::Generic::COLON, 1);
                 vftoa(setpoint[VS_MASH], buf, 100, 1);
                 truncFloat(buf, 4);
                 mashMenu.appendItem(buf, 1);
                 mashMenu.appendItem_P(UIStrings::Units::TUNIT, 1);
-                
+
                 mashMenu.setItem_P(UIStrings::Generic::SET_TIMER, 2);
-                
+
                 if (timerStatus[TIMER_MASH]) mashMenu.setItem_P(UIStrings::Generic::PAUSE_TIMER, 3);
                 else mashMenu.setItem_P(UIStrings::Generic::START_TIMER, 3);
-                
+
                 mashMenu.setItem_P(UIStrings::Generic::CONTINUE, 4);
                 mashMenu.setItem_P(UIStrings::Generic::ABORT, 5);
                 mashMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-                
+
                 byte lastOption = scrollMenu("Mash Menu", &mashMenu);
                 if (lastOption == 0) setSetpoint(VS_HLT, getValue_P(UIStrings::Shared::HLT_SETPOINT, setpoint[VS_HLT] / SETPOINT_MULT, SETPOINT_DIV, 255, UIStrings::Units::TUNIT));
                 else if (lastOption == 1) setSetpoint(VS_MASH, getValue_P(UIStrings::MashMenu::MASH_SETPOINT, setpoint[VS_MASH] / SETPOINT_MULT, SETPOINT_DIV, 255, UIStrings::Units::TUNIT));
@@ -907,7 +907,7 @@ void screenEnter() {
                     }
                 }
                 doInit = 1;
-                
+
             } else if (activeScreen == SCREEN_SPARGE) {
                 //Screen Enter: Sparge
                 int encValue = Encoder.getCount();
@@ -945,16 +945,16 @@ void screenEnter() {
                     }
                     doInit = 1;
                 }
-                
-                
+
+
             } else if (activeScreen == SCREEN_BOIL) {
                 //Screen Enter: Boil
                 menu boilMenu(3, 9);
                 boilMenu.setItem_P(UIStrings::Generic::SET_TIMER, 0);
-                
+
                 if (timerStatus[TIMER_BOIL]) boilMenu.setItem_P(UIStrings::Generic::PAUSE_TIMER, 1);
                 else boilMenu.setItem_P(UIStrings::Generic::START_TIMER, 1);
-                
+
                 boilMenu.setItem_P(UIStrings::BoilMenu::BOIL_CTRL, 2);
                 switch (boilControlState) {
                     case CONTROLSTATE_OFF:
@@ -967,24 +967,24 @@ void screenEnter() {
                         boilMenu.appendItem_P(UIStrings::Generic::MANUAL, 2);
                         break;
                 }
-                
-                
+
+
                 boilMenu.setItem_P(UIStrings::BoilMenu::BOIL_TEMP, 3);
                 boilMenu.appendItem_P(UIStrings::Generic::COLON_SPACE, 3);
                 vftoa(getBoilTemp() * SETPOINT_MULT, buf, 100, 1);
                 truncFloat(buf, 5);
                 boilMenu.appendItem(buf, 3);
                 boilMenu.appendItem_P(UIStrings::Units::TUNIT, 3);
-                
+
                 boilMenu.setItem_P(UIStrings::BoilMenu::BOIL_POWER, 4);
                 boilMenu.appendItem_P(UIStrings::Generic::COLON_SPACE, 4);
                 boilMenu.appendItem(itoa(boilPwr, buf, 10), 4);
                 boilMenu.appendItem("%", 4);
-                
+
                 boilMenu.setItem_P(UIStrings::ValveProfile::BOILRECIRC, 5);
                 if (vlvConfigIsActive(VLV_BOILRECIRC)) boilMenu.appendItem_P(UIStrings::Shared::VALVE_ON, 5);
                 else boilMenu.appendItem_P(UIStrings::Shared::VALVE_OFF, 5);
-                
+
                 boilMenu.setItem_P(UIStrings::Generic::CONTINUE, 6);
                 boilMenu.setItem_P(UIStrings::Generic::ABORT, 7);
                 boilMenu.setItem_P(UIStrings::Generic::EXIT, 255);
@@ -1023,10 +1023,10 @@ void screenEnter() {
                         brewStepSignal(BREWSTEP_BOIL, STEPSIGNAL_ABORT);
                 }
                 doInit = 1;
-                
+
             } else if (activeScreen == SCREEN_CHILL) {
                 //Screen Enter: Chill
-                
+
                 int encValue = Encoder.getCount();
                 if (encValue == 0) {
                     brewStepSignal(BREWSTEP_CHILL, STEPSIGNAL_ADVANCE);
@@ -1050,7 +1050,7 @@ void uiEstop() {
     Encoder.setCount(0);
     LCD.print_P(1, 0, UIStrings::EStop::CLEAR_ALARM);
     LCD.print_P(2, 0, UIStrings::EStop::CLEAR_ESTOP);
-    
+
     while (estop) {
         if (Encoder.change() >= 0) {
             LCD.print_P(2 - Encoder.getCount(), 0, UIStrings::Generic::SPACE);
@@ -1150,16 +1150,16 @@ void startProgramMenu() {
             if (mashVol + grainVol > getCapacity(VS_MASH)) warnMash(mashVol, grainVol);
             if (preboilVol > getCapacity(VS_KETTLE)) warnBoil(preboilVol);
             startMenu.setItem_P(UIStrings::Program::ProgramMenu::EDIT_PROG, 0);
-            
+
             startMenu.setItem_P(UIStrings::Program::ProgramMenu::GRAIN_TEMP, 1);
             startMenu.appendItem_P(UIStrings::Generic::COLON, 1);
             startMenu.appendItem(itoa(getGrainTemp() / SETPOINT_DIV, buf, 10), 1);
             startMenu.appendItem_P(UIStrings::Units::TUNIT, 1);
-            
+
             startMenu.setItem_P(UIStrings::Program::ProgramMenu::START, 2);
             startMenu.setItem_P(UIStrings::Program::ProgramMenu::DELAY_START, 3);
             startMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-            
+
             lastOption = scrollMenu(progName, &startMenu);
             if (lastOption == 0) editProgram(profile);
             else if (lastOption == 1) setGrainTemp(getValue_P(UIStrings::Program::ProgramMenu::GRAIN_TEMP, getGrainTemp(), SETPOINT_DIV, 255, UIStrings::Units::TUNIT));
@@ -1198,7 +1198,7 @@ void startProgramMenu() {
 
 void editProgram(byte pgm) {
     menu progMenu(3, 12);
-    
+
     while (1) {
         Serial.println("EditProg call");
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::BATCH_VOL, 0);
@@ -1206,19 +1206,19 @@ void editProgram(byte pgm) {
         truncFloat(buf, 5);
         progMenu.appendItem(buf, 0);
         progMenu.appendItem_P(UIStrings::Units::VOLUNIT, 0);
-        
+
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::GRAIN_WT, 1);
         vftoa(getProgGrain(pgm), buf, 1000, 1);
         truncFloat(buf, 7);
         progMenu.appendItem(buf, 1);
         progMenu.appendItem_P(UIStrings::Units::WTUNIT, 1);
-        
-        
+
+
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::BOIL_LEN, 2);
         progMenu.appendItem_P(UIStrings::Generic::COLON, 2);
         progMenu.appendItem(itoa(getProgBoil(pgm), buf, 10), 2);
         progMenu.appendItem_P(UIStrings::Program::ProgramMenu::MINUTES_IND, 2);
-        
+
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::MASH_RATIO, 3);
         progMenu.appendItem_P(UIStrings::Generic::COLON, 3);
         unsigned int mashRatio = getProgRatio(pgm);
@@ -1231,41 +1231,41 @@ void editProgram(byte pgm) {
         else {
             progMenu.appendItem_P(UIStrings::Program::ProgramMenu::NO_SPARGE, 3);
         }
-        
+
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::HLT_TEMP, 4);
         vftoa(getProgHLT(pgm) * SETPOINT_MULT, buf, 100, 1);
         truncFloat(buf, 4);
         progMenu.appendItem(buf, 4);
         progMenu.appendItem_P(UIStrings::Units::TUNIT, 4);
-        
+
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::SPARGE_TEMP, 5);
         progMenu.appendItem_P(UIStrings::Generic::COLON, 5);
         vftoa(getProgSparge(pgm) * SETPOINT_MULT, buf, 100, 1);
         truncFloat(buf, 4);
         progMenu.appendItem(buf, 5);
         progMenu.appendItem_P(UIStrings::Units::TUNIT, 5);
-        
+
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::PITCH_TEMP, 6);
         progMenu.appendItem_P(UIStrings::Generic::COLON, 6);
         vftoa(getProgPitch(pgm) * SETPOINT_MULT, buf, 100, 1);
         truncFloat(buf, 4);
         progMenu.appendItem(buf, 6);
         progMenu.appendItem_P(UIStrings::Units::TUNIT, 6);
-        
+
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::MASH_SCHED, 7);
-        
+
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::HEAT_STRIKE_IN, 8);
         byte MLHeatSrc = getProgMLHeatSrc(pgm);
         if (MLHeatSrc == VS_HLT) progMenu.appendItem_P(UIStrings::Vessel::TITLE_VS_HLT, 8);
         else if (MLHeatSrc == VS_MASH) progMenu.appendItem_P(UIStrings::Program::ProgramMenu::MASH, 8);
         else progMenu.appendItem_P(UIStrings::Program::ProgramMenu::UNKWN, 8);
-        
+
         progMenu.setItem_P(UIStrings::ValveProfile::BOILADDS, 9); // Hop/Boil Adds Edit
         progMenu.setItem_P(UIStrings::Program::ProgramMenu::PROG_CALCS, 10);
         progMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-        
+
         byte lastOption = scrollMenu("Program Parameters", &progMenu);
-        
+
         if (lastOption == 0) setProgBatchVol(pgm, getValue_P(UIStrings::Program::ProgramMenu::BATCH_VOLUME, getProgBatchVol(pgm), 1000, 9999999, UIStrings::Units::VOLUNIT));
         else if (lastOption == 1) setProgGrain(pgm, getValue_P(UIStrings::Program::ProgramMenu::GRAIN_WEIGHT, getProgGrain(pgm), 1000, 9999999, UIStrings::Units::WTUNIT));
         else if (lastOption == 2) setProgBoil(pgm, getTimerValue(UIStrings::Program::ProgramMenu::BOIL_LEN, getProgBoil(pgm), 2));
@@ -1293,49 +1293,49 @@ void editProgram(byte pgm) {
 void showProgCalcs(byte pgm) {
     menu calcsMenu(3, 6);
     unsigned long value;
-    
+
     calcsMenu.setItem_P(UIStrings::Program::ProgramMenu::STRIKE_TEMP, 0);
     value = calcStrikeTemp(pgm);
     vftoa(value * SETPOINT_MULT, buf, 100, 1);
     truncFloat(buf, 3);
     calcsMenu.appendItem(buf, 0);
     calcsMenu.appendItem_P(UIStrings::Units::TUNIT, 0);
-    
+
     calcsMenu.setItem_P(UIStrings::Program::ProgramMenu::STRIKE_VOL, 1);
     value = calcStrikeVol(pgm);
     vftoa(value, buf, 1000, 1);
     truncFloat(buf, 4);
     calcsMenu.appendItem(buf, 1);
     calcsMenu.appendItem_P(UIStrings::Units::VOLUNIT, 1);
-    
+
     calcsMenu.setItem_P(UIStrings::Program::ProgramMenu::SPARGE_VOL, 2);
     value = calcSpargeVol(pgm);
     vftoa(value, buf, 1000, 1);
     truncFloat(buf, 4);
     calcsMenu.appendItem(buf, 2);
     calcsMenu.appendItem_P(UIStrings::Units::VOLUNIT, 2);
-    
+
     calcsMenu.setItem_P(UIStrings::Program::ProgramMenu::PREBOIL_VOL, 3);
     value = calcPreboilVol(pgm);
     vftoa(value, buf, 1000, 1);
     truncFloat(buf, 4);
     calcsMenu.appendItem(buf, 3);
     calcsMenu.appendItem_P(UIStrings::Units::VOLUNIT, 3);
-    
+
     calcsMenu.setItem_P(UIStrings::Program::ProgramMenu::GRAIN_VOL, 4);
     value = calcGrainVolume(pgm);
     vftoa(value, buf, 1000, 1);
     truncFloat(buf, 4);
     calcsMenu.appendItem(buf, 4);
     calcsMenu.appendItem_P(UIStrings::Units::VOLUNIT, 4);
-    
+
     calcsMenu.setItem_P(UIStrings::Program::ProgramMenu::GRAIN_LOSS, 5);
     value = calcGrainLoss(pgm);
     vftoa(value, buf, 1000, 1);
     truncFloat(buf, 4);
     calcsMenu.appendItem(buf, 5);
     calcsMenu.appendItem_P(UIStrings::Units::VOLUNIT, 5);
-    
+
     scrollMenu("Program Calcs", &calcsMenu);
 }
 
@@ -1349,14 +1349,14 @@ void showProgCalcs(byte pgm) {
 void editMashSchedule(byte pgm) {
     menu mashMenu(3, 13);
     while (1) {
-        
+
         for (byte i = 0; i < MASHSTEP_COUNT; i++) {
             mashMenu.setItem(concatPSTRS(buf, (char*)pgm_read_word(&TITLE_MASHSTEP[i]), UIStrings::Generic::COLON), i << 4 | OPT_SETMINS);
             mashMenu.setItem(concatPSTRS(buf, (char*)pgm_read_word(&TITLE_MASHSTEP[i]), UIStrings::Generic::COLON), i << 4 | OPT_SETTEMP);
-            
+
             mashMenu.appendItem(itoa(getProgMashMins(pgm, i), buf, 10), i << 4 | OPT_SETMINS);
             mashMenu.appendItem(" min", i << 4 | OPT_SETMINS);
-            
+
             vftoa(getProgMashTemp(pgm, i) * SETPOINT_MULT, buf, 100, 1);
             truncFloat(buf, 4);
             mashMenu.appendItem(buf, i << 4 | OPT_SETTEMP);
@@ -1365,7 +1365,7 @@ void editMashSchedule(byte pgm) {
         mashMenu.setItem_P(UIStrings::Generic::EXIT, 255);
         byte lastOption = scrollMenu("Mash Schedule", &mashMenu);
         byte mashstep = lastOption>>4;
-        
+
         if ((lastOption & B00001111) == OPT_SETMINS)
             setProgMashMins(pgm, mashstep, getTimerValue((char*)pgm_read_word(&(TITLE_MASHSTEP[mashstep])), getProgMashMins(pgm, mashstep), 1));
         else if ((lastOption & B00001111) == OPT_SETTEMP)
@@ -1377,7 +1377,7 @@ void editMashSchedule(byte pgm) {
 unsigned int editHopSchedule (unsigned int sched) {
     unsigned int retVal = sched;
     menu hopMenu(3, 13);
-    
+
     while (1) {
         hopMenu.setItem_P(UIStrings::Program::HopSchedule::AT_BOIL, 0);
         if (retVal & 1) {
@@ -1402,7 +1402,7 @@ unsigned int editHopSchedule (unsigned int sched) {
             hopMenu.appendItem_P(UIStrings::Shared::VALVE_OFF, 11);
         }
         hopMenu.setItem_P(UIStrings::Generic::EXIT, 12);
-        
+
         byte lastOption = scrollMenu("Boil Additions", &hopMenu);
         if (lastOption < 12) retVal = retVal ^ (1 << lastOption);
         else if (lastOption == 12) return retVal;
@@ -1482,7 +1482,7 @@ byte scrollMenu(const char* sTitle, menu *objMenu) {
     //Force refresh in case selected value was set
     Encoder.setCount(objMenu->getSelected());
     boolean redraw = 1;
-    
+
     while(1) {
         int encValue;
         if (redraw) encValue = Encoder.getCount();
@@ -1507,7 +1507,7 @@ byte scrollMenu(const char* sTitle, menu *objMenu) {
 void drawMenu(const char* sTitle, menu *objMenu) {
     LCD.clear();
     if (sTitle != NULL) LCD.print(0, 0, sTitle);
-    
+
     for (byte i = 0; i < 3; i++) {
         objMenu->getVisibleRow(i, buf);
         LCD.print(i + 1, 1, buf);
@@ -1522,7 +1522,7 @@ byte getChoice(menu *objMenu, byte iRow) {
     Encoder.setMax(objMenu->getItemCount() - 1);
     Encoder.setCount(0);
     boolean redraw = 1;
-    
+
     while(1) {
         int encValue;
         if (redraw) {
@@ -1534,7 +1534,7 @@ byte getChoice(menu *objMenu, byte iRow) {
             objMenu->setSelected(encValue);
             LCD.center(iRow, 1, objMenu->getSelectedRow(buf), 18);
         }
-        
+
         //If Enter
         if (Encoder.ok()) {
             LCD.print_P(iRow, 0, UIStrings::Generic::SPACE);
@@ -1574,35 +1574,35 @@ unsigned long getValue_P(const char *sTitle, unsigned long defValue, unsigned in
     return getValue(title, defValue, divisor, maxValue, dispUnit);
 }
 
-unsigned long getValue(char sTitle[], unsigned long defValue, unsigned int divisor, unsigned long maxValue, const char *dispUnit) {
+unsigned long getValue(const char *sTitle, unsigned long defValue, unsigned int divisor, unsigned long maxValue, const char *dispUnit) {
     unsigned long retValue = defValue;
     char strValue[11];
     byte cursorPos = 0;
     boolean cursorState = 0; //0 = Unselected, 1 = Selected
     byte increment;
-    
+
     itoa(divisor - 1, strValue, 10);
     byte precision = strlen(strValue);
     if (divisor == 1) precision = 0;
     unsigned int mult = pow10(precision);
     ultoa(maxValue/divisor, strValue, 10);
     byte digits = strlen(strValue) + precision;
-    
+
     Encoder.setMin(0);
     Encoder.setMax(digits);
     Encoder.setCount(0);
-    
+
     LCD.setCustChar_P(0, CHARFIELD);
     LCD.setCustChar_P(1, CHARCURSOR);
     LCD.setCustChar_P(2, CHARSEL);
-    
+
     byte valuePos = (20 - digits + 1) / 2;
     LCD.clear();
     LCD.print(0, 0, sTitle);
     LCD.print_P(1, valuePos + digits + 1, dispUnit);
     LCD.print_P(3, 9, UIStrings::Generic::OK);
     boolean redraw = 1;
-    
+
     while(1) {
         int encValue;
         if (redraw) {
@@ -1634,7 +1634,7 @@ unsigned long getValue(char sTitle[], unsigned long defValue, unsigned int divis
             strLPad(strValue, digits + (precision ? 1 : 0), ' ');
             LCD.print(1, valuePos - 1, strValue);
         }
-        
+
         if (Encoder.ok()) {
             if (cursorPos == digits) break;
             else {
@@ -1679,29 +1679,29 @@ unsigned long ulpow(unsigned long base, unsigned long exponent) {
  * Prompt the user for a value in hex. The value is shown with 0x prepended
  * and the user may only select 0-f for each digit.
  */
-unsigned long getHexValue(char sTitle[], unsigned long defValue) {
+unsigned long getHexValue(const char* sTitle, unsigned long defValue) {
     unsigned long retValue = defValue;
     byte cursorPos = 0;
     boolean cursorState = 0; //0 = Unselected, 1 = Selected
-    
+
     byte digits = 2;
-    
+
     Encoder.setMin(0);
     Encoder.setMax(digits);
     Encoder.setCount(0);
-    
+
     LCD.setCustChar_P(0, CHARFIELD);
     LCD.setCustChar_P(1, CHARCURSOR);
     LCD.setCustChar_P(2, CHARSEL);
-    
+
     byte valuePos = (20 - digits + 1) / 2;
     LCD.clear();
     LCD.print(0, 0, sTitle);
     LCD.print_P(3, 9, UIStrings::Generic::OK);
     boolean redraw = 1;
-    
+
     unsigned long multiplier = ulpow(16, (digits - cursorPos - 1));
-    
+
     while(1) {
         int encValue;
         if (redraw) {
@@ -1741,7 +1741,7 @@ unsigned long getHexValue(char sTitle[], unsigned long defValue) {
             LCD.print(1, valuePos - 1, buf);
             LCD.print(1, valuePos - 3, "0x");
         }
-        
+
         if (Encoder.ok()) {
             if (cursorPos == digits) {
                 break;
@@ -1798,7 +1798,7 @@ void printTimer(byte timer, byte iRow, byte iCol) {
         byte hours = timerValue[timer] / 3600000;
         byte mins = (timerValue[timer] - hours * 3600000) / 60000;
         byte secs = (timerValue[timer] - hours * 3600000 - mins * 60000) / 1000;
-        
+
         //Update LCD once per second
         if (millis() - timerLastPrint >= 1000) {
             timerLastPrint = millis();
@@ -1820,7 +1820,7 @@ int getTimerValue(const char *sTitle, int defMins, byte maxHours) {
     Encoder.setMin(0);
     Encoder.setMax(2);
     Encoder.setCount(0);
-    
+
     LCD.clear();
     LCD.print_P(0,0,sTitle);
     LCD.print(1, 7, "(hh:mm)");
@@ -1828,7 +1828,7 @@ int getTimerValue(const char *sTitle, int defMins, byte maxHours) {
     LCD.print_P(3, 9, UIStrings::Generic::OK);
     boolean redraw = 1;
     int encValue;
-    
+
     while(1) {
         if (redraw) {
             redraw = 0;
@@ -1863,7 +1863,7 @@ int getTimerValue(const char *sTitle, int defMins, byte maxHours) {
             LCD.lPad(2, 8, itoa(hours, buf, 10), 2, '0');
             LCD.lPad(2, 11, itoa(mins, buf, 10), 2, '0');
         }
-        
+
         if (Encoder.ok()) {
             if (cursorPos == 2) return hours * 60 + mins;
             cursorState = cursorState ^ 1; //Toggles between value editing mode and cursor navigation.
@@ -1892,7 +1892,7 @@ int getTimerValue(const char *sTitle, int defMins, byte maxHours) {
 void getString(const char *sTitle, char defValue[], byte chars) {
     char retValue[20];
     strcpy(retValue, defValue);
-    
+
     //Right-Pad with spaces
     boolean doWipe = 0;
     for (byte i = 0; i < chars; i++) {
@@ -1900,18 +1900,18 @@ void getString(const char *sTitle, char defValue[], byte chars) {
         if (doWipe) retValue[i] = 32;
     }
     retValue[chars] = '\0';
-    
+
     byte cursorPos = 0;
     boolean cursorState = 0; //0 = Unselected, 1 = Selected
     Encoder.setMin(0);
     Encoder.setMax(chars);
     Encoder.setCount(0);
-    
-    
+
+
     LCD.setCustChar_P(0, CHARFIELD);
     LCD.setCustChar_P(1, CHARCURSOR);
     LCD.setCustChar_P(2, CHARSEL);
-    
+
     LCD.clear();
     LCD.print_P(0,0,sTitle);
     LCD.print_P(3, 9, UIStrings::Generic::OK);
@@ -1940,7 +1940,7 @@ void getString(const char *sTitle, char defValue[], byte chars) {
             }
             LCD.print(1, (20 - chars + 1) / 2 - 1, retValue);
         }
-        
+
         if (Encoder.ok()) {
             if (cursorPos == chars) {
                 strcpy(defValue, retValue);
@@ -2000,7 +2000,7 @@ void menuSetup() {
 #ifdef PVOUT
     setupMenu.setItem_P(UIStrings::SystemSetup::VALVE_PROFILES, 3);
 #ifdef PVOUT_TYPE_MODBUS
-    setupMenu.setItem_P(UIStrings::SystemSetup::RS485_OUTPUTS, 4); 
+    setupMenu.setItem_P(UIStrings::SystemSetup::RS485_OUTPUTS, 4);
 #endif
 #endif
     setupMenu.setItem_P(UIStrings::EEPROMInit::INIT_EEPROM, 5);
@@ -2016,7 +2016,7 @@ void menuSetup() {
     setupMenu.setItem_P(UIStrings::SystemSetup::TRIGGERS, 8);
 #endif
     setupMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-    
+
     while(1) {
         byte lastOption = scrollMenu("System Setup", &setupMenu);
         if (lastOption == 0) assignSensor();
@@ -2056,9 +2056,9 @@ void menuSetup() {
 void cfgRgb() {
     byte targetAddr = 0x7f;
     boolean identifyOn = false;
-    
+
     menu m(3, 5);
-    
+
     while (1) {
         m.setItem_P(UIStrings::SystemSetup::RGBIO::TARGET_ADDR, 0);
         sprintf(buf, "0x%02x", targetAddr);
@@ -2115,21 +2115,21 @@ void assignSensor() {
 #ifdef RIMS_TEMP_SENSOR
     tsMenu.setItem_P(UIStrings::SystemSetup::TempSensorAssign::RIMS_SENSOR, RIMS_TEMP_SENSOR);
 #endif
-    
+
     Encoder.setMin(0);
     Encoder.setMax(tsMenu.getItemCount() - 1);
     Encoder.setCount(tsMenu.getSelected());
-    
+
     boolean redraw = 1;
     int encValue;
-    
+
     while (1) {
         if (redraw) {
             //First time entry or back from the sub-menu.
             redraw = 0;
             encValue = Encoder.getCount();
         } else encValue = Encoder.change();
-        
+
         if (encValue >= 0) {
             tsMenu.setSelected(encValue);
             //The user has navigated toward a new temperature probe screen.
@@ -2139,7 +2139,7 @@ void assignSensor() {
             for (byte i=0; i<8; i++) LCD.lPad(2,i*2+2,itoa(tSensor[tsMenu.getValue()][i], buf, 16), 2, '0');
         }
         displayAssignSensorTemp(tsMenu.getValue()); //Update each loop
-        
+
         if (Encoder.cancel()) return;
         else if (Encoder.ok()) {
             encValue = Encoder.getCount();
@@ -2167,7 +2167,7 @@ void assignSensor() {
                 setTSAddr(encValue, addr);
             }
             else if (selected > 2) return;
-            
+
             Encoder.setMin(0);
             Encoder.setMax(tsMenu.getItemCount() - 1);
             Encoder.setCount(tsMenu.getSelected());
@@ -2199,12 +2199,12 @@ void displayAssignSensorTemp(int sensor) {
 
 void cfgOutputs() {
     menu outputMenu(3, 21);
-    
+
     while(1) {
         //Note: Menu values represent two 4-bit values
         //High-nibble = vessel: VS_HLT-VS_STEAM/VS_PUMP
         //Low-nibble = menu item: OPT_XXXXXXXX (see #defines above)
-        
+
         outputMenu.setItem_P(UIStrings::SystemSetup::OutputConfig::HLT_MODE, VS_HLT<<4 | OPT_MODE);
         if (PIDEnabled[VS_HLT]) {
             outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::PID_MODE, VS_HLT<<4 | OPT_MODE);
@@ -2218,7 +2218,7 @@ void cfgOutputs() {
         outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::PIDGAIN, VS_HLT<<4 | OPT_GAIN);
         outputMenu.setItem_P(UIStrings::Vessel::TITLE_VS_HLT, VS_HLT<<4 | OPT_HYSTERESIS);
         outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::HYSTERESIS, VS_HLT<<4 | OPT_HYSTERESIS);
-        
+
         outputMenu.setItem_P(UIStrings::SystemSetup::OutputConfig::MASH_MODE, VS_MASH<<4 | OPT_MODE);
         if (PIDEnabled[VS_MASH]) {
             outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::PID_MODE, VS_MASH<<4 | OPT_MODE);
@@ -2232,7 +2232,7 @@ void cfgOutputs() {
         outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::PIDGAIN, VS_MASH<<4 | OPT_GAIN);
         outputMenu.setItem_P(UIStrings::Vessel::TITLE_VS_MASH, VS_MASH<<4 | OPT_HYSTERESIS);
         outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::HYSTERESIS, VS_MASH<<4 | OPT_HYSTERESIS);
-        
+
         outputMenu.setItem_P(UIStrings::SystemSetup::OutputConfig::KETTLE_MODE, VS_KETTLE<<4 | OPT_MODE);
         if (PIDEnabled[VS_KETTLE]) {
             outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::PID_MODE, VS_KETTLE<<4 | OPT_MODE);
@@ -2246,19 +2246,19 @@ void cfgOutputs() {
         outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::PIDGAIN, VS_KETTLE<<4 | OPT_GAIN);
         outputMenu.setItem_P(UIStrings::Vessel::TITLE_VS_KETTLE, VS_KETTLE<<4 | OPT_HYSTERESIS);
         outputMenu.appendItem_P(UIStrings::SystemSetup::OutputConfig::HYSTERESIS, VS_KETTLE<<4 | OPT_HYSTERESIS);
-        
+
         outputMenu.setItem_P(UIStrings::BoilMenu::BOIL_TEMP, OPT_BOILTEMP);
         outputMenu.appendItem_P(UIStrings::Generic::COLON_SPACE, OPT_BOILTEMP);
         vftoa(getBoilTemp(), buf, SETPOINT_DIV, 1);
         truncFloat(buf, 5);
         outputMenu.appendItem(buf, OPT_BOILTEMP);
         outputMenu.appendItem_P(UIStrings::Units::TUNIT, OPT_BOILTEMP);
-        
+
         outputMenu.setItem_P(UIStrings::BoilMenu::BOIL_POWER, OPT_BOILPWR);
         outputMenu.appendItem_P(UIStrings::Generic::COLON_SPACE, OPT_BOILPWR);
         outputMenu.appendItem(itoa(boilPwr, buf, 10), OPT_BOILPWR);
         outputMenu.appendItem("%", OPT_BOILPWR);
-        
+
 #ifdef PID_FLOW_CONTROL
         outputMenu.setItem_P(UIStrings::SystemSetup::OutputConfig::SPARGE_PUMP_MODE, VS_PUMP<<4 | OPT_MODE);
         if (PIDEnabled[VS_PUMP]) {
@@ -2287,7 +2287,7 @@ void cfgOutputs() {
         outputMenu.setItem_P(UIStrings::SystemSetup::OutputConfig::STEAMZERO, VS_STEAM<<4 | OPT_ZERO);
 #endif
         outputMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-        
+
         byte lastOption = scrollMenu("Output Settings", &outputMenu);
         byte vessel = lastOption>>4;
         char title[20];
@@ -2299,7 +2299,7 @@ void cfgOutputs() {
                 if (vessel >= VS_HLT && vessel <= VS_KETTLE)
 #endif
                     strcpy_P(title, (char*)pgm_read_word(&(UIStrings::SystemSetup::TITLE_VS[vessel])));
-        
+
         if ((lastOption & B00001111) == OPT_MODE) {
             if (PIDEnabled[vessel]) setPIDEnabled(vessel, 0);
             else setPIDEnabled(vessel, 1);
@@ -2307,7 +2307,7 @@ void cfgOutputs() {
             strcat_P(title, UIStrings::SystemSetup::OutputConfig::PIDCYCLE);
             setPIDCycle(vessel, getValue(title, PIDCycle[vessel], 10, 255, UIStrings::Shared::SEC));
             pid[vessel].SetOutputLimits(0, PIDCycle[vessel] * pidLimits[vessel]);
-            
+
         } else if ((lastOption & B00001111) == OPT_GAIN) {
             strcat_P(title, UIStrings::SystemSetup::OutputConfig::PIDGAIN);
             setPIDGain(title, vessel);
@@ -2349,7 +2349,7 @@ void setPIDGain(char sTitle[], byte vessel) {
     Encoder.setMin(0);
     Encoder.setMax(3);
     Encoder.setCount(0);
-    
+
     LCD.clear();
     LCD.print(0,0,sTitle);
     LCD.print_P(1, 0, UIStrings::SystemSetup::PIDConfig::PID_SEP);
@@ -2440,20 +2440,20 @@ void cfgVolumes() {
     for (byte vessel = VS_HLT; vessel <= VS_KETTLE; vessel++) {
         volMenu.setItem_P((char*)pgm_read_word(&(UIStrings::SystemSetup::TITLE_VS[vessel])), vessel<<4 | OPT_CAPACITY);
         volMenu.appendItem_P(UIStrings::SystemSetup::VolumeConfig::CAPACITY, vessel<<4 | OPT_CAPACITY);
-        
+
         volMenu.setItem_P((char*)pgm_read_word(&(UIStrings::SystemSetup::TITLE_VS[vessel])), vessel<<4 | OPT_DEADSPACE);
         volMenu.appendItem_P(UIStrings::SystemSetup::VolumeConfig::DEADSPACE, vessel<<4 | OPT_DEADSPACE);
-        
+
         volMenu.setItem_P((char*)pgm_read_word(&(UIStrings::SystemSetup::TITLE_VS[vessel])), vessel<<4 | OPT_CALIBRATION);
         volMenu.appendItem_P(UIStrings::SystemSetup::VolumeConfig::CALIBRATION, vessel<<4 | OPT_CALIBRATION);
     }
     volMenu.setItem_P(UIStrings::SystemSetup::VolumeConfig::EVAP_RATE, OPT_EVAP);
     volMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-    
+
     while(1) {
         byte lastOption = scrollMenu("Volume/Capacity", &volMenu);
         byte vessel = lastOption>>4;
-        
+
         char title[20];
 #ifdef PID_FLOW_CONTROL
         if (vessel >= VS_HLT && vessel <= VS_PUMP)
@@ -2463,7 +2463,7 @@ void cfgVolumes() {
                 if (vessel >= VS_HLT && vessel <= VS_KETTLE)
 #endif
                     strcpy_P(title, (char*)pgm_read_word(&(UIStrings::SystemSetup::TITLE_VS[vessel])));
-        
+
         if ((lastOption & B00001111) == OPT_CAPACITY) {
             strcat_P(title, UIStrings::SystemSetup::VolumeConfig::CAPACITY);
             setCapacity(vessel, getValue(title, getCapacity(vessel), 1000, 9999999, UIStrings::Units::VOLUNIT));
@@ -2512,10 +2512,10 @@ void volCalibMenu(char sTitle[], byte vessel) {
 #ifdef DEBUG_VOLCALIB
                 logVolCalib("Value before dialog:", analogRead(vSensor[vessel]));
 #endif
-                
+
                 setVolCalib(vessel, lastOption, 0, getValue_P(UIStrings::SystemSetup::VolumeCalibration::CURR_VOL, 0, 1000, 9999999, UIStrings::Units::VOLUNIT)); //Set temporary the value to zero. It will be updated in the next step.
                 volCalibEntryMenu(vessel, lastOption);
-                
+
 #ifdef DEBUG_VOLCALIB
                 logVolCalib("Value that was saved:", PROMreadInt(239 + vessel * 20 + lastOption * 2));
 #endif
@@ -2530,7 +2530,7 @@ void volCalibMenu(char sTitle[], byte vessel) {
 void volCalibEntryMenu(byte vessel, byte entry) {
     char sTitle[21] ="";
     menu calibMenu(3, 4);
-    
+
     while(1) {
         vftoa(calibVols[vessel][entry], buf, 1000, 1);
         truncFloat(buf, 6);
@@ -2539,9 +2539,9 @@ void volCalibEntryMenu(byte vessel, byte entry) {
         strcat(sTitle, buf);
         strcat_P(sTitle, UIStrings::Generic::SPACE);
         strcat_P(sTitle, UIStrings::Units::VOLUNIT);
-        
+
         unsigned int newSensorValue = GetCalibrationValue(vessel);
-        
+
         calibMenu.setItem_P(UIStrings::SystemSetup::VolumeCalibration::UPDATE, 0);
         calibMenu.appendItem(itoa(calibVals[vessel][entry], buf, 10), 0); //Show the currently saved value which can be zero.
         calibMenu.appendItem_P(UIStrings::SystemSetup::VolumeCalibration::TO, 0);
@@ -2549,9 +2549,9 @@ void volCalibEntryMenu(byte vessel, byte entry) {
         calibMenu.setItem_P(UIStrings::SystemSetup::VolumeCalibration::MANUAL_ENTRY, 1);
         calibMenu.setItem_P(UIStrings::Shared::DELETE, 2);
         calibMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-        
+
         byte lastOption = scrollMenu(sTitle, &calibMenu);
-        
+
         if (lastOption == 0) {
             //Update the volume value.
             setVolCalib(vessel, entry, newSensorValue, calibVols[vessel][entry]);
@@ -2610,7 +2610,7 @@ unsigned long cfgValveProfile (char sTitle[], unsigned long defValue) {
     unsigned long retValue = defValue;
     //firstBit: The left most bit being displayed
     byte firstBit, encMax;
-    
+
     encMax = PVOUT_COUNT + 1;
 #ifdef PVOUT_TYPE_MODBUS
     for (byte i = 0; i < PVOUT_MODBUS_MAXBOARDS; i++) {
@@ -2618,18 +2618,18 @@ unsigned long cfgValveProfile (char sTitle[], unsigned long defValue) {
             encMax = max(encMax, ValvesMB[i]->offset() + ValvesMB[i]->count() + 1);
     }
 #endif
-    
+
     Encoder.setMin(0);
     Encoder.setCount(0);
     Encoder.setMax(encMax);
     //(Set to MAX + 1 to force redraw)
     firstBit = encMax + 1;
-    
+
     LCD.clear();
     LCD.print(0,0,sTitle);
     LCD.print_P(3, 3, UIStrings::SystemSetup::ValveProfileConfig::TEST);
     LCD.print_P(3, 13, UIStrings::SystemSetup::ValveProfileConfig::SAVE);
-    
+
     boolean redraw = 1;
     while(1) {
         int encValue;
@@ -2655,13 +2655,13 @@ unsigned long cfgValveProfile (char sTitle[], unsigned long defValue) {
                     }
                 }
             }
-            
+
             for (byte i = firstBit; i < min(encMax - 1, firstBit + 18); i++) {
                 if (i < 9) itoa(i + 1, buf, 10); else buf[0] = i + 56;
                 buf[1] = '\0';
                 LCD.print(2, i - firstBit + 1, buf);
             }
-            
+
             if (firstBit > 0) LCD.print_P(2, 0, UIStrings::Generic::LESS_SYM); else LCD.print_P(2, 0, UIStrings::Generic::SPACE);
             if (firstBit + 18 < encMax - 1) LCD.print_P(2, 19, UIStrings::Generic::GREATER_SYM); else LCD.print_P(2, 19, UIStrings::Generic::SPACE);
             if (encValue == encMax - 1) {
@@ -2682,7 +2682,7 @@ unsigned long cfgValveProfile (char sTitle[], unsigned long defValue) {
                 LCD.print_P(2, encValue - firstBit + 1, UIStrings::SystemSetup::ValveProfileConfig::CARROT);
             }
         }
-        
+
         if (Encoder.ok()) {
             encValue = Encoder.getCount();
             if (encValue == encMax) return retValue;
@@ -2731,7 +2731,7 @@ void cfgMODBUSOutputs() {
                 boardMenu.appendItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::DISABLED, i);
             else {
                 byte result = ValvesMB[i]->detect();
-                if (result == ku8MBSuccess) 
+                if (result == ku8MBSuccess)
                     boardMenu.appendItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::CONNECTED, i);
                 else if (result == ku8MBResponseTimedOut)
                     boardMenu.appendItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::TIMEOUT, i);
@@ -2742,7 +2742,7 @@ void cfgMODBUSOutputs() {
             }
         }
         boardMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-        
+
         byte lastOption = scrollMenu("RS485 Outputs", &boardMenu);
         if (lastOption < PVOUT_MODBUS_MAXBOARDS) cfgMODBUSOutputBoard(lastOption);
         else return;
@@ -2758,27 +2758,27 @@ void cfgMODBUSOutputBoard(byte board) {
             boardMenu.appendItem(itoa(addr, buf, 10), 0);
         else
             boardMenu.appendItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::NA, 0);
-        
+
         boardMenu.setItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::REGISTER, 1);
         boardMenu.appendItem(itoa(getVlvModbusReg(board), buf, 10), 1);
         boardMenu.setItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::COUNT, 2);
         boardMenu.appendItem(itoa(getVlvModbusCoilCount(board), buf, 10), 2);
         boardMenu.setItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::OFFSET, 3);
         boardMenu.appendItem(itoa(getVlvModbusOffset(board), buf, 10), 3);
-        
+
         if (addr == PVOUT_MODBUS_ADDRNONE)
             boardMenu.setItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::AUTO_ASSIGN, 4);
-        
+
         if (ValvesMB[board]) {
             boardMenu.setItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::ID_MODE, 5);
             boardMenu.appendItem_P((ValvesMB[board]->getIDMode()) ? UIStrings::Generic::ON : UIStrings::Generic::OFF, 5);
         }
-        
-        if (addr != PVOUT_MODBUS_ADDRNONE)      
+
+        if (addr != PVOUT_MODBUS_ADDRNONE)
             boardMenu.setItem_P(UIStrings::Shared::DELETE, 6);
-        
+
         boardMenu.setItem_P(UIStrings::Generic::EXIT, 255);
-        
+
         char title[] = "RS485 Output Board  ";
         title[19] = '0' + board;
         byte lastOption = scrollMenu(title, &boardMenu);
@@ -2807,7 +2807,7 @@ void cfgMODBUSOutputBoard(byte board) {
 
 void cfgMODBUSOutputAssign(byte board) {
     PVOutMODBUS tempMB(PVOUT_MODBUS_ADDRINIT, getVlvModbusReg(board), getVlvModbusCoilCount(board), getVlvModbusOffset(board));
-    
+
     byte result = 1;
     while ((result = tempMB.detect())) {
         LCD.clear();
@@ -2824,7 +2824,7 @@ void cfgMODBUSOutputAssign(byte board) {
         choiceMenu.appendItem_P(UIStrings::SystemSetup::MODBUSOutputConfig::ASSIGN_RETRY, 0);
         choiceMenu.setItem_P(UIStrings::Generic::ABORT, 1);
         if(getChoice(&choiceMenu, 3))
-            return;      
+            return;
     }
     byte newAddr = getValue_P(UIStrings::SystemSetup::MODBUSOutputConfig::NEW_ADDRESS, PVOUT_MODBUS_BASEADDR + board, 1, 254, UIStrings::Generic::EMPTY);
     if (tempMB.setAddr(newAddr)) {
@@ -2842,11 +2842,11 @@ void cfgMODBUSOutputAssign(byte board) {
 void adjustLCD() {
     byte cursorPos = 0; //0 = brightness, 1 = contrast, 2 = cancel, 3 = save
     boolean cursorState = 0; //0 = Unselected, 1 = Selected
-    
+
     Encoder.setMin(0);
     Encoder.setCount(0);
     Encoder.setMax(3);
-    
+
     LCD.clear();
     LCD.print_P(0,0, UIStrings::SystemSetup::LCDConfig::ADJUST_LCD);
     LCD.print_P(1, 1, UIStrings::SystemSetup::LCDConfig::BRIGHTNESS);
@@ -2867,7 +2867,7 @@ void adjustLCD() {
         else encValue = Encoder.change();
         if (encValue >= 0) {
             if (cursorState) {
-                if (cursorPos == 0) { 
+                if (cursorPos == 0) {
                     bright = encValue;
                     LCD.setBright(bright);
                 } else if (cursorPos == 1) {
@@ -2931,7 +2931,7 @@ void adjustLCD() {
 #ifdef DIGITAL_INPUTS
 void cfgTriggers() {
     menu triggerMenu(3, 6);
-    
+
     while(1) {
         triggerMenu.setItem_P(UIStrings::SystemSetup::TriggersConfig::ESTOP, 0);
         triggerMenu.setItem_P(UIStrings::SystemSetup::TriggersConfig::SPARGE_MAX, 1);
@@ -2943,7 +2943,7 @@ void cfgTriggers() {
             if (getTriggerPin(i)) triggerMenu.appendItem(itoa(getTriggerPin(i), buf, 10), i);
             else triggerMenu.appendItem_P(UIStrings::SystemSetup::TriggersConfig::NONE, i);
         }
-        
+
         byte lastOption = scrollMenu("Trigger Assignment", &triggerMenu);
         if (lastOption < 5) setTriggerPin(lastOption, getValue_P(UIStrings::SystemSetup::TriggersConfig::INPUT_PIN_NONE, getTriggerPin(lastOption), 1, DIGIN_COUNT, UIStrings::Generic::EMPTY));
         else return;

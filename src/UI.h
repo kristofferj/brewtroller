@@ -66,9 +66,9 @@ void printTimer(byte timer, byte iRow, byte iCol);
 void getString(const char *sTitle, char defValue[], byte chars);
 
 unsigned long getValue_P(const char *sTitle, unsigned long defValue, unsigned int divisor, unsigned long maxValue, const char *dispUnit);
-unsigned long getValue(char sTitle[], unsigned long defValue, unsigned int divisor, unsigned long maxValue, const char *dispUnit);
+unsigned long getValue(const char *sTitle, unsigned long defValue, unsigned int divisor, unsigned long maxValue, const char *dispUnit);
 unsigned long ulpow(unsigned long base, unsigned long exponent);
-unsigned long getHexValue(char sTitle[], unsigned long defValue);
+unsigned long getHexValue(const char *sTitle, unsigned long defValue);
 
 /**
  * Concatenate two strings from flash, placing result in RAM

@@ -1,4 +1,4 @@
-/*  
+/*
    Copyright (C) 2009, 2010 Matt Reba, Jeremiah Dillingham
 
     This file is part of BrewTroller.
@@ -29,6 +29,7 @@ Documentation, Forums and more information available at http://www.brewtroller.c
 #include "Enum.h"
 #include "Config.h"
 #include "BrewTroller.h"
+#include "Com_RGBIO8.h"
 #include "Com_BTPD.h"
 #include "Com.h"
 
@@ -108,10 +109,10 @@ void updateCom() {
  ********************************************************************************************************************/
 #ifdef BTNIC_PROTOCOL
   #include "Com_BTnic.h"
-  
+
   #ifdef BTNIC_EMBEDDED
     BTnic btnicI2C;
-    
+
     void updateI2CBTnic() {
       switch (btnicI2C.getState()) {
         case BTNIC_STATE_IDLE:
@@ -135,7 +136,7 @@ void updateCom() {
             btnicI2C.rx(data);
             if(btnicI2C.getState() != BTNIC_STATE_RX) break;
           }
-          
+
         case BTNIC_STATE_TX:
           //TX Ready
           while(btnicI2C.getState() == BTNIC_STATE_TX) {
@@ -160,7 +161,7 @@ void updateCom() {
       }
     }
   #endif
-  
+
   #ifdef COM_SERIAL0
     #if COM_SERIAL0 == BTNIC /* BTnic over Serial0 */
       BTnic btnicS0;
